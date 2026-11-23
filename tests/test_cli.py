@@ -93,6 +93,16 @@ class CliTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(json.loads(result.stdout), [])
 
+    def test_positional_audit_keeps_trailing_empty_text_record(self):
+        self.write_csv(["identifier"], ["001"], [""])
+        workbook, sheet = self.write_workbook(["identifier"], ["001"], [""])
+        sheet["A4"].number_format = "@"
+        workbook.save(self.xlsx_path)
+
+        result = self.run_cli("--column", "identifier", "--json")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(json.loads(result.stdout), [])
+
     def test_key_reports_both_missing_and_added_rows(self):
         self.write_csv(["key", "postal"], ["K1", "001"], ["K2", "002"])
         workbook, _ = self.write_workbook(

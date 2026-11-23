@@ -77,7 +77,9 @@ def read_xlsx(path, sheet):
                 Cell(cell.value, cell.data_type) for cell in row[: len(header)]
             )
             rows.append(cells + (EMPTY,) * (len(header) - len(cells)))
-        while rows and all(cell.value is None for cell in rows[-1]):
+        while rows and all(
+            cell.value is None and cell.kind != "inlineStr" for cell in rows[-1]
+        ):
             rows.pop()
         return header, rows
     finally:
